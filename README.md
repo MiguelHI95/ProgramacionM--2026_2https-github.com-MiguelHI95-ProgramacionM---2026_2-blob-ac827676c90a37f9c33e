@@ -1,2 +1,2 @@
-# BaseDeDatosII---2026_2
-Tareas de base de datos en clase
+# ProgramacionMovilI---2026_2
+Tareas de Programacion Movil en clase
