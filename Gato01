@@ -1,0 +1,131 @@
+package com.mycompany.gato01;
+
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JOptionPane;
+
+public class Gato01 extends JFrame implements ActionListener{
+
+    JButton botones[] = new JButton[9];
+    boolean turnoX = true;
+    Font fuente = new Font("Arial", 1, 50);
+    
+    JButton btnReiniciar;
+    JPanel panelJuego, panelOpciones;
+
+    public Gato01(){
+
+        setSize(400,400);
+        setTitle("Juego Gato");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        panelJuego = new JPanel(new GridLayout(3,3));
+        panelOpciones = new JPanel();
+
+        for(int i=0;i<botones.length;i++){
+            botones[i] = new JButton("");
+            botones[i].setFont(fuente);
+            botones[i].addActionListener(this);
+            panelJuego.add(botones[i]);
+        }
+
+        btnReiniciar = new JButton("Reiniciar Juego");
+
+        btnReiniciar.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+
+                for(int i=0;i<botones.length;i++){
+                    botones[i].setText("");
+                    botones[i].setEnabled(true);
+                }
+
+                turnoX = true;
+            }
+        });
+
+        panelOpciones.add(btnReiniciar);
+
+        add(panelJuego, BorderLayout.CENTER);
+        add(panelOpciones, BorderLayout.SOUTH);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e){
+
+        String letra;
+
+        if(turnoX){
+            letra = "X";
+            turnoX = false;
+        }else{
+            letra = "O";
+            turnoX = true;
+        }
+
+        for(int i=0;i<botones.length;i++){
+            if(e.getSource() == botones[i]){
+                botones[i].setText(letra);
+                botones[i].setEnabled(false);
+            }
+        }
+
+        validarGanador();
+    }
+
+    public void validarGanador(){
+
+        String b0 = botones[0].getText();
+        String b1 = botones[1].getText();
+        String b2 = botones[2].getText();
+        String b3 = botones[3].getText();
+        String b4 = botones[4].getText();
+        String b5 = botones[5].getText();
+        String b6 = botones[6].getText();
+        String b7 = botones[7].getText();
+        String b8 = botones[8].getText();
+
+        if(b0.equals("X") && b1.equals("X") && b2.equals("X") ||
+           b3.equals("X") && b4.equals("X") && b5.equals("X") ||
+           b6.equals("X") && b7.equals("X") && b8.equals("X") ||
+           b0.equals("X") && b3.equals("X") && b6.equals("X") ||
+           b1.equals("X") && b4.equals("X") && b7.equals("X") ||
+           b2.equals("X") && b5.equals("X") && b8.equals("X") ||
+           b0.equals("X") && b4.equals("X") && b8.equals("X") ||
+           b2.equals("X") && b4.equals("X") && b6.equals("X"))
+        {
+            JOptionPane.showMessageDialog(null,"Ganó X");
+            desactivarBotones();
+        }
+
+        if(b0.equals("O") && b1.equals("O") && b2.equals("O") ||
+           b3.equals("O") && b4.equals("O") && b5.equals("O") ||
+           b6.equals("O") && b7.equals("O") && b8.equals("O") ||
+           b0.equals("O") && b3.equals("O") && b6.equals("O") ||
+           b1.equals("O") && b4.equals("O") && b7.equals("O") ||
+           b2.equals("O") && b5.equals("O") && b8.equals("O") ||
+           b0.equals("O") && b4.equals("O") && b8.equals("O") ||
+           b2.equals("O") && b4.equals("O") && b6.equals("O"))
+        {
+            JOptionPane.showMessageDialog(null,"Ganó O");
+            desactivarBotones();
+        }
+    }
+
+    public void desactivarBotones(){
+        for(int i=0;i<botones.length;i++){
+            botones[i].setEnabled(false);
+        }
+    }
+
+    public static void main(String[] args){
+        Gato01 juego = new Gato01();
+        juego.setVisible(true);
+    }
+}
