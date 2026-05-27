@@ -1,0 +1,191 @@
+package com.example.miapp;
+
+import android.app.Activity;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+public class Calculadora extends Activity implements View.OnClickListener {
+
+    Button[] btnDigitos = new Button[10];
+    Button btnSuma, btnResta, btnMulti, btnDiv, btnPunto, btnIgual;
+    
+    EditText pantalla;
+    double op1 = 0, op2 = 0, resultado = 0;
+    String operador = "";
+    boolean nuevoNumero = true;
+    boolean puntoUsado = false;
+
+    @Override
+    protected void onCreate(Bundle b) {
+        super.onCreate(b);
+
+        LinearLayout panelPrincipal = new LinearLayout(this);
+        panelPrincipal.setOrientation(LinearLayout.VERTICAL);
+        panelPrincipal.setBackgroundColor(Color.BLACK);
+
+        // Pantalla
+        LinearLayout panelPantalla = new LinearLayout(this);
+        panelPantalla.setOrientation(LinearLayout.VERTICAL);
+        panelPantalla.setBackgroundColor(Color.GRAY);
+        panelPantalla.setMinimumHeight(220);
+
+        pantalla = new EditText(this);
+        pantalla.setTextColor(Color.WHITE);
+        pantalla.setTextSize(50);
+        pantalla.setMaxLines(1);
+        pantalla.setTextAlignment(EditText.TEXT_ALIGNMENT_TEXT_END);
+        pantalla.setBackgroundColor(Color.BLACK);
+        pantalla.setPadding(20, 20, 20, 20);
+
+        panelPantalla.addView(pantalla);
+
+        // Panel de botones
+        LinearLayout panelBotones = new LinearLayout(this);
+        panelBotones.setOrientation(LinearLayout.HORIZONTAL);
+        panelBotones.setWeightSum(4);
+
+        // Panel números
+        LinearLayout panelNumeros = new LinearLayout(this);
+        panelNumeros.setOrientation(LinearLayout.VERTICAL);
+        panelNumeros.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 3));
+
+        LinearLayout fila1 = new LinearLayout(this);
+        LinearLayout fila2 = new LinearLayout(this);
+        LinearLayout fila3 = new LinearLayout(this);
+        LinearLayout fila4 = new LinearLayout(this);
+
+        // Crear botones numéricos
+        for (int i = 0; i <= 9; i++) {
+            btnDigitos[i] = new Button(this);
+            btnDigitos[i].setText(String.valueOf(i));
+            btnDigitos[i].setTextSize(24);
+            btnDigitos[i].setOnClickListener(this);
+        }
+
+        // Organizar botones numéricos
+        fila1.addView(btnDigitos[7]);
+        fila1.addView(btnDigitos[8]);
+        fila1.addView(btnDigitos[9]);
+
+        fila2.addView(btnDigitos[4]);
+        fila2.addView(btnDigitos[5]);
+        fila2.addView(btnDigitos[6]);
+
+        fila3.addView(btnDigitos[1]);
+        fila3.addView(btnDigitos[2]);
+        fila3.addView(btnDigitos[3]);
+
+        fila4.addView(btnDigitos[0]);
+        fila4.addView(btnPunto = new Button(this));
+        fila4.addView(btnIgual = new Button(this));
+
+        btnPunto.setText(".");
+        btnIgual.setText("=");
+
+        btnPunto.setOnClickListener(this);
+        btnIgual.setOnClickListener(this);
+
+        panelNumeros.addView(fila1);
+        panelNumeros.addView(fila2);
+        panelNumeros.addView(fila3);
+        panelNumeros.addView(fila4);
+
+        // Panel operaciones
+        LinearLayout panelOperaciones = new LinearLayout(this);
+        panelOperaciones.setOrientation(LinearLayout.VERTICAL);
+        panelOperaciones.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1));
+
+        btnSuma = new Button(this); btnSuma.setText("+");
+        btnResta = new Button(this); btnResta.setText("-");
+        btnMulti = new Button(this); btnMulti.setText("×");
+        btnDiv = new Button(this); btnDiv.setText("÷");
+
+        btnSuma.setOnClickListener(this);
+        btnResta.setOnClickListener(this);
+        btnMulti.setOnClickListener(this);
+        btnDiv.setOnClickListener(this);
+
+        panelOperaciones.addView(btnSuma);
+        panelOperaciones.addView(btnResta);
+        panelOperaciones.addView(btnMulti);
+        panelOperaciones.addView(btnDiv);
+
+        // Agregar todo
+        panelBotones.addView(panelNumeros);
+        panelBotones.addView(panelOperaciones);
+
+        panelPrincipal.addView(panelPantalla);
+        panelPrincipal.addView(panelBotones);
+
+        setContentView(panelPrincipal);
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        // Números
+        for (int i = 0; i <= 9; i++) {
+            if (v.equals(btnDigitos[i])) {
+                if (nuevoNumero) {
+                    pantalla.setText("");
+                    nuevoNumero = false;
+                }
+                pantalla.setText(pantalla.getText().toString() + i);
+                return;
+            }
+        }
+
+        // Botón Punto
+        if (v.equals(btnPunto)) {
+            if (!puntoUsado && !pantalla.getText().toString().contains(".")) {
+                if (pantalla.getText().toString().isEmpty()) {
+                    pantalla.setText("0.");
+                } else {
+                    pantalla.setText(pantalla.getText().toString() + ".");
+                }
+                puntoUsado = true;
+            }
+        }
+
+        // Operaciones
+        if (v.equals(btnSuma) || v.equals(btnResta) || v.equals(btnMulti) || v.equals(btnDiv)) {
+            if (!pantalla.getText().toString().isEmpty()) {
+                op1 = Double.parseDouble(pantalla.getText().toString());
+                nuevoNumero = true;
+                puntoUsado = false;
+
+                if (v.equals(btnSuma)) operador = "+";
+                else if (v.equals(btnResta)) operador = "-";
+                else if (v.equals(btnMulti)) operador = "*";
+                else if (v.equals(btnDiv)) operador = "/";
+            }
+        }
+
+        // Botón Igual
+        if (v.equals(btnIgual)) {
+            if (!pantalla.getText().toString().isEmpty() && !operador.isEmpty()) {
+                op2 = Double.parseDouble(pantalla.getText().toString());
+
+                switch (operador) {
+                    case "+": resultado = op1 + op2; break;
+                    case "-": resultado = op1 - op2; break;
+                    case "*": resultado = op1 * op2; break;
+                    case "/":
+                        if (op2 != 0) resultado = op1 / op2;
+                        else resultado = 0; // Evitar división por cero
+                        break;
+                }
+
+                pantalla.setText(String.valueOf(resultado));
+                nuevoNumero = true;
+                puntoUsado = false;
+                operador = "";
+            }
+        }
+    }
+}
